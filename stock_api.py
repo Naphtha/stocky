@@ -39,7 +39,7 @@ class StockMinion(object):
 
     def place_order(self, **kwargs):
 
-        mandatory = ['account', 'venue', 'stock', 'direction', 'orderType']
+        mandatory = ['account', 'venue', 'stock', 'qty', 'direction', 'orderType']
         missing_args = [x for x in mandatory if x not in kwargs]
         
         if(missing_args):
@@ -47,6 +47,7 @@ class StockMinion(object):
         
         # leave the dictionary packed
         request_body = kwargs
+        print(request_body)
         resp = self.session.post(BASE_URL + 'venues/%s/stocks/%s/orders' % (kwargs['venue'], kwargs['stock']),
                                  data = json.dumps(request_body))
         data = StockMinion._process_response(resp.text, resp.status_code)
@@ -90,7 +91,11 @@ if __name__ == '__main__':
     TEST_STOCK    = "FOOBAR"
     TEST_ACCOUNT  = "EXB123456"
 
-    instance = StockMinion()
+    # pick up api key from local untracked file
+    with open('api.key', 'r') as secret_file:
+        API_KEY = secret_file.readlines()[0]
+
+    instance = StockMinion(API_KEY)
 
     data = instance.check_api()
     print(data)
@@ -104,5 +109,5 @@ if __name__ == '__main__':
     data = instance.get_orderbook(TEST_VENUE, TEST_STOCK)
     print(data)
 
-    data = instance.place_order(account = TEST_ACCOUNT, venue = TEST_VENUE, stock = TEST_STOCK,  direction = "buy", orderType = "market")
+    data = instance.place_order(account = TEST_ACCOUNT, venue = TEST_VENUE, stock = TEST_STOCK, qty = 100, direction = "buy", orderType = "limit", price = 100)
     print(data)
