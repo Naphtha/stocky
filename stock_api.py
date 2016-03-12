@@ -47,12 +47,14 @@ class StockMinion(object):
         
         # leave the dictionary packed
         request_body = kwargs
+
         print(request_body)
         resp = self.session.post(BASE_URL + 'venues/%s/stocks/%s/orders' % (kwargs['venue'], kwargs['stock']),
-                                 data = json.dumps(request_body))
+                                 data=json.dumps(request_body))
         data = StockMinion._process_response(resp.text, resp.status_code)
         return data
         
+
 
 
         
@@ -93,7 +95,7 @@ if __name__ == '__main__':
 
     # pick up api key from local untracked file
     with open('api.key', 'r') as secret_file:
-        API_KEY = secret_file.readlines()[0]
+        API_KEY = secret_file.readlines()[0].rstrip('\n')
 
     instance = StockMinion(API_KEY)
 
@@ -111,3 +113,5 @@ if __name__ == '__main__':
 
     data = instance.place_order(account = TEST_ACCOUNT, venue = TEST_VENUE, stock = TEST_STOCK, qty = 100, direction = "buy", orderType = "limit", price = 100)
     print(data)
+
+
