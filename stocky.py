@@ -49,8 +49,6 @@ class StockMinion(object):
         
         # leave the dictionary packed
         request_body = kwargs
-
-        print(request_body)
         resp = self.session.post(BASE_URL + 'venues/{0}/stocks/{1}/orders'.format(kwargs['venue'], kwargs['stock']),
                                  data=json.dumps(request_body))
         data = StockMinion._process_response(resp.text, resp.status_code)
