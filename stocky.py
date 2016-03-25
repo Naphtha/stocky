@@ -1,8 +1,10 @@
 import requests
 import json
 
-class StockMinion(object):
+BASE_URL = "https://api.stockfighter.io/ob/api/"
 
+class StockMinion(object):    
+    
     def __init__(self, api_key = None):
         self.session = requests.Session()
         if(api_key):
@@ -79,6 +81,12 @@ class StockMinion(object):
         data = StockMinion._process_response(resp.text, resp.status_code)
         return data
 
+    def _call_api(self, url, *args, **kwargs):
+
+
+        data = StockMinion._process_response(resp.text, resp.status_code)
+        return data
+
         
     @staticmethod
     def _process_json(json_obj):
@@ -110,7 +118,7 @@ class StockMinion(object):
     
 if __name__ == '__main__':
 
-    BASE_URL = "https://api.stockfighter.io/ob/api/"
+
     TEST_VENUE = "TESTEX"
     TEST_STOCK    = "FOOBAR"
     TEST_ACCOUNT  = "EXB123456"
