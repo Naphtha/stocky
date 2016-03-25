@@ -1,1 +1,1 @@
-import stock_api
+import stocky
