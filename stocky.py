@@ -17,7 +17,7 @@ class StockMinion(object):
         
     def check_api(self):
         
-        data = StockMinion._call_api(self ,BASE_URL + 'heartbeat', 'get')
+        data = self._call_api(BASE_URL + 'heartbeat', 'get')
 
         return data
 
@@ -26,7 +26,7 @@ class StockMinion(object):
 
         venue = self.venue
         
-        data = StockMinion._call_api(self, BASE_URL + 'venues/{0}/heartbeat'.format(venue), 'get')
+        data = self._call_api(BASE_URL + 'venues/{0}/heartbeat'.format(venue), 'get')
 
         return data
 
@@ -35,7 +35,7 @@ class StockMinion(object):
 
         venue = self.venue
         
-        data = StockMinion._call_api(self, BASE_URL + 'venues/{0}/stocks'.format(venue), 'get')
+        data = self._call_api(BASE_URL + 'venues/{0}/stocks'.format(venue), 'get')
         
         return data
     
@@ -45,7 +45,7 @@ class StockMinion(object):
         venue = self.venue
         stock = self.stock
         
-        data = StockMinion._call_api(self, BASE_URL + 'venues/{0}/stocks/{1}'.format(venue, stock), 'get')
+        data = self._call_api(BASE_URL + 'venues/{0}/stocks/{1}'.format(venue, stock), 'get')
         
         return data
 
@@ -66,18 +66,17 @@ class StockMinion(object):
         
         # leave the dictionary packed
         request_body = kwargs
-        resp = self.session.post(BASE_URL + 'venues/{0}/stocks/{1}/orders'.format(kwargs['venue'], kwargs['stock']),
-                                 data=json.dumps(request_body))
-        data = StockMinion._process_response(resp.text, resp.status_code)
+        data = self._call_api(BASE_URL + 'venues/{0}/stocks/{1}/orders'.format(kwargs['venue'], kwargs['stock']),
+                              'post', data=json.dumps(request_body))
         return data
         
     def get_quote(self):
 
         venue = self.venue
         stock = self.stock
+
+        data = self._call_api(BASE_URL + 'venues/{0}/stocks/{1}/quote'.format(venue, stock), 'get')
         
-        resp = self.session.get(BASE_URL + 'venues/{0}/stocks/{1}/quote'.format(venue, stock))
-        data = StockMinion._process_response(resp.text, resp.status_code)
         return data
 
     def get_order_status(self, id):
@@ -85,8 +84,8 @@ class StockMinion(object):
         venue = self.venue
         stock = self.stock
         
-        resp = self.session.get(BASE_URL + 'venues/{0}/stocks/{1}/orders/{2}'.format(venue, stock, id))
-        data = StockMinion._process_response(resp.text, resp.status_code)
+        data = self._call_api(BASE_URL + 'venues/{0}/stocks/{1}/orders/{2}'.format(venue, stock, id), 'get')
+        
         return data
 
     def cancel_order(self, id):
@@ -94,8 +93,8 @@ class StockMinion(object):
         venue = self.venue
         stock = self.stock
         
-        resp = self.session.delete(BASE_URL + 'venues/{0}/stocks/{1}/orders/{2}'.format(venue, stock, id))
-        data = StockMinion._process_response(resp.text, resp.status_code)
+        data = self._call_api(BASE_URL + 'venues/{0}/stocks/{1}/orders/{2}'.format(venue, stock, id), 'delete')
+        
         return data
 
     def get_all_orders(self, stock = None):
@@ -104,10 +103,9 @@ class StockMinion(object):
         account = self.account
         
         if(stock):
-            resp = self.session.get(BASE_URL + 'venues/{0}/accounts/{1}/stocks/{2}/orders'.format(venue, account, stock))
+            data = self._call_api(BASE_URL + 'venues/{0}/accounts/{1}/stocks/{2}/orders'.format(venue, account, stock), 'get')
         else:
-            resp = self.session.get(BASE_URL + 'venues/{0}/accounts/{1}/orders'.format(venue, account))
-        data = StockMinion._process_response(resp.text, resp.status_code)
+            data = self._call_api(BASE_URL + 'venues/{0}/accounts/{1}/orders'.format(venue, account), 'get')
         return data
 
 
@@ -150,9 +148,6 @@ class StockMinion(object):
     
 if __name__ == '__main__':
 
-    import sys
-    
-
     TEST_VENUE = "TESTEX"
     TEST_STOCK    = "FOOBAR"
     TEST_ACCOUNT  = "EXB123456"
@@ -175,18 +170,18 @@ if __name__ == '__main__':
     data = instance.get_orderbook()
     print(data)
 
-    sys.exit()
-    
     data = instance.place_order(qty = 100, direction = "buy", orderType = "limit", price = 100)
     print(data)
 
+    order_num = data['id']
+    
     data = instance.get_quote()
     print(data)
-
-    data = instance.get_order_status(1226)
+    
+    data = instance.get_order_status(order_num)
     print(data)
 
-    data = instance.cancel_order(1226)
+    data = instance.cancel_order(order_num)
     print(data)
 
     data = instance.get_all_orders()
