@@ -17,9 +17,6 @@ class StockMinion(object):
         
     def check_api(self):
         
-        #resp = self.session.get(BASE_URL + 'heartbeat')
-        #data = StockMinion._process_response(resp.text, resp.status_code)
-
         data = StockMinion._call_api(self ,BASE_URL + 'heartbeat', 'get')
 
         return data
@@ -29,8 +26,8 @@ class StockMinion(object):
 
         venue = self.venue
         
-        resp = self.session.get(BASE_URL + 'venues/{0}/heartbeat'.format(venue))
-        data = StockMinion._process_response(resp.text, resp.status_code)    
+        data = StockMinion._call_api(self, BASE_URL + 'venues/{0}/heartbeat'.format(venue), 'get')
+
         return data
 
 
@@ -38,8 +35,8 @@ class StockMinion(object):
 
         venue = self.venue
         
-        resp = self.session.get(BASE_URL + 'venues/{0}/stocks'.format(venue))
-        data = StockMinion._process_response(resp.text, resp.status_code)
+        data = StockMinion._call_api(self, BASE_URL + 'venues/{0}/stocks'.format(venue), 'get')
+        
         return data
     
     
@@ -48,8 +45,8 @@ class StockMinion(object):
         venue = self.venue
         stock = self.stock
         
-        resp = self.session.get(BASE_URL + 'venues/{0}/stocks/{1}'.format(venue, stock))
-        data = StockMinion._process_response(resp.text, resp.status_code)
+        data = StockMinion._call_api(self, BASE_URL + 'venues/{0}/stocks/{1}'.format(venue, stock), 'get')
+        
         return data
 
 
@@ -169,8 +166,6 @@ if __name__ == '__main__':
     data = instance.check_api()
     print(data)
 
-    sys.exit()
-
     data = instance.check_venue()
     print(data)
 
@@ -180,6 +175,8 @@ if __name__ == '__main__':
     data = instance.get_orderbook()
     print(data)
 
+    sys.exit()
+    
     data = instance.place_order(qty = 100, direction = "buy", orderType = "limit", price = 100)
     print(data)
 
